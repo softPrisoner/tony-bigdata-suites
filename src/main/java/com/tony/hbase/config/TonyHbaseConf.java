@@ -1,5 +1,6 @@
 package com.tony.hbase.config;
 
+import com.tony.hbase.dao.HbaseInsertDaoImpl;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
@@ -29,7 +30,7 @@ public class TonyHbaseConf {
     private static Map<String, String> familyMap = null;
     private static String[] regions = new String[1024];
     private static Configuration hbaseConf;
-    private String insertTable;
+    private static String insertTable;
     private static String filePath;
 
     public TonyHbaseConf(String filePath_) {
@@ -102,6 +103,11 @@ public class TonyHbaseConf {
         }
     }
 
+    public static HbaseInsertDaoImpl getHBaseInsertDao() throws IOException {
+
+        return new HbaseInsertDaoImpl(getTable(insertTable));
+    }
+
     public static Table getTable(String tableName) {
         Table table = null;
         try {
@@ -170,10 +176,10 @@ public class TonyHbaseConf {
         try {
             if (null != connection) {
                 connection.close();
-                LOGGER.info("disconnect with hbase service,if you expect please restart");
+                LOGGER.info("Disconnect with hbase service,if you expect please restart");
             }
         } catch (IOException e) {
-            LOGGER.error("disconnecting the hbase service has happened error cause by:{}", e.getMessage());
+            LOGGER.error("Disconnecting the hbase service has happened error cause by:{}", e.getMessage());
             e.printStackTrace();
         }
     }
