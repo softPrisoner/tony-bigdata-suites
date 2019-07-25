@@ -22,7 +22,7 @@ public interface HbaseInsertService {
     /**
      * 插入json格式数据
      */
-    void insertDaoFromJson(String json) throws Exception;
+    void insertDataFromJson(String json) throws Exception;
 
     /**
      * 插入列表序列
