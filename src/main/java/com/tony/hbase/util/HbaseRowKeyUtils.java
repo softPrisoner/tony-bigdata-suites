@@ -39,7 +39,8 @@ public class HbaseRowKeyUtils {
 
     public static byte[] getPhoneRowKey(long phoneNo, String channel, long timestamp, long serialNo) {
         ByteBuffer buffer = ByteBuffer.allocate(28);
-        buffer.put(Objects.requireNonNull(TonyHbaseConf.getIdx(phoneNo)))
+        buffer
+                .put(Objects.requireNonNull(TonyHbaseConf.getIdx(phoneNo)))
                 .put(channel.getBytes())
                 .putLong(timestamp)
                 .putLong(serialNo);
