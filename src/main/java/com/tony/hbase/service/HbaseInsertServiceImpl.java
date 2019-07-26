@@ -31,6 +31,7 @@ public class HbaseInsertServiceImpl implements HbaseInsertService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void insertDataFromMap(Map<String, Object> dataMap) throws Exception {
         String family;
         byte[] rowKey = HbaseRowKeyUtils.getTimeRowKey((Long) dataMap.get("seq")
@@ -104,8 +105,8 @@ public class HbaseInsertServiceImpl implements HbaseInsertService {
             if (dataMap.get("seq") != null) {
                 Put put = new Put(HbaseRowKeyUtils
                         .getTimeRowKey(Long.parseLong(dataMap.get("seq"))
-                        , dataMap.get("channelID")
-                        , Long.parseLong(dataMap.get("transactionTime"))));
+                                , dataMap.get("channelID")
+                                , Long.parseLong(dataMap.get("transactionTime"))));
 
                 for (Map.Entry entry : dataMap.entrySet()) {
                     family = TonyHbaseConf.getFamily((String) entry.getKey());
