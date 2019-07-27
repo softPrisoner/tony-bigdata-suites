@@ -28,9 +28,9 @@ public interface HbaseQueryService {
 
     long getCountByTime(String channel, long startTime, long stopTime) throws Throwable;
 
-    int deleteByTime(String channel, long startTime, long stopTime, int count);
-
     List<Map<String, String>> getDataBySerialNo(long serialNo);
+
+    int deleteByTime(String channel, long startTime, long stopTime, int count);
 
     void deleteBySerialNo(long serialNo) throws Exception;
 
