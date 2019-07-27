@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public interface HbaseQueryService {
 
-    List<Map<String, String>> getDataByAccount(String channel, long account, long startTime, long endTime, int offset, int limit);
+    List<Map<String, String>> getDataByAccount(String channel, long account, long startTime, long stopTime, int offset, int limit);
 
     List<Map<String, String>> getDataByAccount(String channel, long account, long startTime, long stopTime);
 
@@ -18,21 +18,21 @@ public interface HbaseQueryService {
 
     List<Map<String, String>> getDataByPhone(String channel, long phone, long startTime, long stopTime);
 
-    List<Map<String, String>> getDataById(String channel, String id, long startTime, long endTime, int offset, long limit);
+    List<Map<String, String>> getDataById(String channel, String id, long startTime, long endTime, int offset, int limit);
 
     List<Map<String, String>> getDataById(String channel, String id, long startTime, long endTime);
 
-    List<Map<String, String>> getDataByTime(String channel, long startTime, long endTime, int offset, long limit);
+    List<Map<String, String>> getDataByTime(String channel, long startTime, long stopTime, int offset, int limit);
 
-    List<Map<String, String>> getDataByTime(String channel, long startTime, long endTime);
+    List<Map<String, String>> getDataByTime(String channel, long startTime, long stopTime);
 
-    long getCountByTime(String channel, long startTime, long endTime);
+    long getCountByTime(String channel, long startTime, long stopTime) throws Throwable;
 
-    int deleteByTime(String channel, long startTime, long endTime, int count);
+    int deleteByTime(String channel, long startTime, long stopTime, int count);
 
     List<Map<String, String>> getDataBySerialNo(long serialNo);
 
-    void deleteBySerialNo(long serialNo);
+    void deleteBySerialNo(long serialNo) throws Exception;
 
 
 }
