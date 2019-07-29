@@ -30,16 +30,26 @@ public class TonyHbaseConf {
     private static Map<String, String> familyMap = null;
     private static String[] regions = new String[1024];
     private static Configuration hbaseConf;
-    private static String insertTable;
+    private static String insertTable = null;
     private static String filePath;
 
-    public TonyHbaseConf(String filePath_) {
-        this.filePath = filePath_;
+    public TonyHbaseConf(String filePath) {
+        this.filePath = filePath;
     }
 
-    public static void init(String filePath_) {
+    public static void init(String path) {
         LOGGER.debug("Init hbase configuration file path:[{}]", filePath);
-        filePath = filePath_;
+        filePath = path;
+        initFamilyMapping(path);
+        initRegionMapping(path);
+        initHbaseConf(path);
+    }
+
+    public static void init() {
+        LOGGER.debug("Init hbase configuration file path:[{}]", filePath);
+        initFamilyMapping(filePath);
+        initRegionMapping(filePath);
+        initHbaseConf(filePath);
     }
 
     private static void initFamilyMapping(String filePath) {
@@ -61,7 +71,7 @@ public class TonyHbaseConf {
     private static void initRegionMapping(String filePath) {
         Properties props = new Properties();
         try {
-            props.load(new FileInputStream(new File(filePath)));
+            props.load(new FileInputStream(new File(filePath + File.separator + "region_mapping_conf.properties")));
         } catch (FileNotFoundException e) {
             LOGGER.error("check your family.properties filePath error happen cause by{}", e.getMessage());
         } catch (IOException e) {
@@ -75,29 +85,33 @@ public class TonyHbaseConf {
     private static void initHbaseConf(String filePath) {
         String nodes = null;
         String port = null;
-        String maxsize = null;
-
+//        String maxsize = null;
         Properties props = new Properties();
         try {
-            props.load(new FileInputStream(new File(filePath + File.separator + "service.properties")));
+            props.load(new FileInputStream(new File(filePath + File.separator + "application.properties")));
             nodes = props.getProperty("hbase.nodes");
-            port = props.getProperty("port");
-            maxsize = props.getProperty("hbase.maxsize", "-1");
-            String insertTable = props.getProperty("hbase.insertTable", "ALL_TRADE_HISTORY");
+            port = props.getProperty("hbase.port");
+//            maxsize = props.getProperty("hbase.maxsize", "-1");
+            insertTable = props.getProperty("hbase.insert.table", "ALL_TRADE_HISTORY");
         } catch (IOException e) {
-            LOGGER.error("read config file service.properties failed plesase check your path. cause by"
-                    , e.getMessage());
+            LOGGER.error("read config file service.properties failed plesase check your path." +
+                    " cause by:{}", e.getMessage());
         }
         hbaseConf = HBaseConfiguration.create();
         //设置zookeeper地址
         hbaseConf.set("hbase.zookeeper.quorum", nodes);
         //设置客户端访问端口
         hbaseConf.set("hbase.zookeeper.property.clientPort", port);
+        //default 14
         hbaseConf.setInt("hbase.client.retries.number", 10);
         hbaseConf.setInt("hbase.client.ipc.pool.size", 6);
+        hbaseConf.setInt("zookeeper.recovery.retry", 3);
+        hbaseConf.setInt("zookeeper.recovery.retry.intervalmill", 1);
+        //default 60
+        hbaseConf.setInt(" hbase.regionserver.lease.period", 60);
         try {
             connection = ConnectionFactory.createConnection(hbaseConf);
-            LOGGER.info("hbase connection success at");
+            LOGGER.info("hbase connection success at:[{}]", nodes);
         } catch (IOException e) {
             LOGGER.error("hbase connection failed cause by:{}", e.getMessage());
         }
@@ -113,10 +127,10 @@ public class TonyHbaseConf {
         try {
             table = connection.getTable(TableName.valueOf(tableName));
             if (null == table) {
-                LOGGER.warn("get the table from hbase connection failed,please check your tableName:[{}] correctly", tableName);
+                LOGGER.warn("get the table from hbase connection failed,please " +
+                        "check your tableName:[{}] correctly", tableName);
             }
             return table;
-
         } catch (IOException e) {
             LOGGER.error("some inner error has happened when get the " +
                     "table name from hbase service. cause by{}", e.getMessage());
@@ -154,7 +168,8 @@ public class TonyHbaseConf {
 
     public static byte[] getIdx(String serialNo) {
         try {
-            int idx = Math.abs(hashCode(serialNo.toCharArray())) & 1023;
+            //找寻匹配的region
+            int idx = Math.abs(hash(serialNo.toCharArray())) & 1023;
             return regions[idx].getBytes();
         } catch (Exception e) {
             LOGGER.info("getIdx failed cause by:{}", e.getMessage());
@@ -162,7 +177,7 @@ public class TonyHbaseConf {
         }
     }
 
-    public static int hashCode(char[] value) {
+    public static int hash(char[] value) {
         int h = 0;
         if (value.length > 0) {
             for (char c : value) {
@@ -179,8 +194,7 @@ public class TonyHbaseConf {
                 LOGGER.info("Disconnect with hbase service,if you expect please restart");
             }
         } catch (IOException e) {
-            LOGGER.error("Disconnecting the hbase service has happened error cause by:{}", e.getMessage());
-            e.printStackTrace();
+            LOGGER.error("Disconnect with the hbase service has happened error caused by:{}", e.getMessage());
         }
     }
 }
