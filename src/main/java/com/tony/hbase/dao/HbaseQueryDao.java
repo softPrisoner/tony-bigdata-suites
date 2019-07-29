@@ -17,9 +17,7 @@ public interface HbaseQueryDao {
 
     ResultScanner getResultScanner(String tableName, String family, byte[] startRowKey, byte[] stopRowKey, int limit);
 
-
     Map<String, Map<String, String>> getResultScanner(String tableName, String startRowKey, String stopRowKey);
-
 
     List<Map<String, String>> getResultScanner(String tableName, String keyword, byte[] startRowKey, byte[] stopRowKey);
 
