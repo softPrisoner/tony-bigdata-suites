@@ -5,10 +5,10 @@ import java.util.Map;
 
 /**
  * @author tony
- * @describe TonyDataModel
+ * @describe TransactionDO
  * @date 2019-07-24
  */
-public class TonyDataModel {
+public class TransactionDO {
     private List<String> data;
     private int pageNo;
     private int limit;
@@ -20,7 +20,7 @@ public class TonyDataModel {
     private String channel;
     private Map<String, byte[]> lastRow;
 
-    public TonyDataModel() {
+    public TransactionDO() {
 
     }
 
