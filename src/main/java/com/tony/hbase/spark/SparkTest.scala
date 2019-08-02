@@ -14,7 +14,7 @@ object SparkTest {
       .set("spark.cores.max", "2")
       .setMaster("local[2]")
     val sc = new SparkContext(conf)
-    val text = sc.textFile("/home/tony/spark/test.txt")
+    val text = sc.textFile("hdfs://localhost:9000/test1/test.txt")
     val result = text.flatMap(_.split(",")).map((_, 1)).reduceByKey(_ + _).collect()
     result.foreach(println)
   }
