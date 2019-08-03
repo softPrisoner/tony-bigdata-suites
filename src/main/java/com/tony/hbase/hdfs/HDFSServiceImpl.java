@@ -60,7 +60,7 @@ public class HDFSServiceImpl implements HDFSService {
         FSDataOutputStream outputStream = fs.create(new Path(outFilePath));
 //        FileInputStream fileInputStream =new FileInputStream();
         IOUtils.copy(file.getInputStream(), outputStream);
-        Thread.currentThread().sleep(1000*60);
+      // 尝试解决hdfs流失帧问题  Thread.currentThread().sleep(1000*60);
         return outFilePath;
     }
 
@@ -73,7 +73,6 @@ public class HDFSServiceImpl implements HDFSService {
         String newFileName = UUID.randomUUID().toString().replace("-", "").substring(0, 8) + ".mp4";
         FileOutputStream fileOutputStream = new FileOutputStream(new File("/home/tony/video/" + newFileName));
         IOUtils.copy(in, fileOutputStream);
-        Thread.currentThread().sleep(1000*60);
         return newFileName;
     }
 }
