@@ -1,5 +1,7 @@
 package com.tony.hbase.hdfs;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 
 /**
@@ -8,5 +10,7 @@ import java.io.IOException;
  * @date 2019-08-03
  */
 public interface HDFSService {
-   void uploadFile(String inputFilePath, String outFilePath) throws IOException;
+    String uploadFile(MultipartFile file, String type) throws IOException;
+
+    void downloadFile(String filePath) throws IOException;
 }
