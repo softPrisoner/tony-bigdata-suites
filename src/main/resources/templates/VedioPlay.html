@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button formaction="/v1/video/get"></button>
+<!--先播放本地视频-->
+<!--在尝试播放hdfs视频-->
+<video width="500" height="500"
+       src="http://locahost:8080/v1/video/play?fpath=${fPath}"
+       typeof="video/mp4">
+</video>
+</body>
+</html>
