@@ -1,4 +1,4 @@
-package com.elianda.etest.retry;
+package com.tony.test.retry;
 
 import org.apache.hadoop.hbase.shaded.org.apache.commons.lang.math.RandomUtils;
 
