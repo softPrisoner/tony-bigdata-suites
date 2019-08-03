@@ -1,10 +1,28 @@
 plugins {
     id 'java'
+    id 'scala'
 }
 
 group 'com.tony'
 version '1.0-SNAPSHOT'
-
+sourceSets {
+    main {
+        scala {
+            srcDirs = ['src/main/scala', 'src/main/java']
+        }
+        java {
+            srcDirs = []
+        }
+    }
+    test {
+        scala {
+            srcDirs = ['src/test/scala', 'src/test/java']
+        }
+        java {
+            srcDirs = []
+        }
+    }
+}
 sourceCompatibility = 1.8
 targetCompatibility = '1.8'
 repositories {
@@ -14,15 +32,25 @@ repositories {
 
 dependencies {
     compile 'com.google.guava:guava:23.0'
-    compile group: 'com.alibaba', name: 'fastjson', version: '1.2.56'
+    compile 'com.alibaba:fastjson:1.2.9'
     compile group: 'org.apache.poi', name: 'poi', version: '3.17'
     compile group: 'org.apache.hadoop', name: 'hadoop-client', version: '2.7.3'
     compile group: 'org.apache.hadoop', name: 'hadoop-common', version: '2.7.3'
     compile group: 'org.apache.hadoop', name: 'hadoop-hdfs', version: '2.7.3'
-    compile 'org.codehaus.groovy:groovy-all:2.4.7'
     compile group: 'org.apache.hbase', name: 'hbase-shaded-client', version: '1.4.8'
+    compile(group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.0.RELEASE') {
+        exclude group: "com.fasterxml.jackson.core"
+    }
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '2.1.0.RELEASE'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.6'
     testCompile group: 'junit', name: 'junit', version: '4.12'
-
+//    compile group: 'org.apache.spark', name: 'spark-core_2.11', version: '2.4.3'
+//    compile 'org.apache.spark:spark-streaming_2.11:2.4.3'
+//    compile 'org.apache.spark:spark-sql_2.11:2.4.3'
+    compile 'org.apache.spark:spark-mllib_2.11:2.4.3'
+    compile "org.scala-lang:scala-library:2.11.7"
+    compile "org.scala-lang:scala-compiler:2.11.7"
+    compile "org.scala-lang:scala-reflect:2.11.7"
 }
 configurations {
     all*.exclude group: 'ch.qos.logback', module: 'logback-core'
