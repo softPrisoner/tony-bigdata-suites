@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Date;
 
 
 /**
@@ -45,7 +46,7 @@ public class VideoUploadController {
         }
         String filePath = hdfsService.uploadFile(file, "video");
         LOGGER.info("upload video success");
-        return "redirect:/v1/page/play?filePath=" + filePath;
+        return "redirect:/v1/page/play?filePath=" + filePath + "&time=" + new Date().getTime();
     }
 
     @PutMapping("/audio/upload")
