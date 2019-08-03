@@ -23,11 +23,12 @@ public class HDFSTest {
         Path newPath=new Path("/test1/");
         System.setProperty("HADOOP_USER_NAME", "tony");
         System.setProperty("hadoop.home.dir", "/");
-        if (!fs.exists(newPath)){
-            fs.mkdirs(newPath);
-        }
-        FSDataOutputStream outputStream = fs.create(new Path("/test1/test.txt"));
-    FileInputStream fileInputStream=new FileInputStream("/home/tony/spark/test.txt");
-        IOUtils.copy(fileInputStream,outputStream);
+        fs.delete(new Path("/video/wx_5535752/2019/8/3"),true);
+//        if (!fs.exists(newPath)){
+//            fs.mkdirs(newPath);
+//        }
+//        FSDataOutputStream outputStream = fs.create(new Path("/test1/test.txt"));
+//    FileInputStream fileInputStream=new FileInputStream("/home/tony/spark/test.txt");
+//        IOUtils.copy(fileInputStream,outputStream);
     }
 }

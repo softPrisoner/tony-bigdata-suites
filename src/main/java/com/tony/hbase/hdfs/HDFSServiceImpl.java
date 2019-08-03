@@ -23,8 +23,13 @@ import java.util.UUID;
  */
 @Service
 public class HDFSServiceImpl implements HDFSService {
+    static {
+        System.setProperty("HADOOP_USER_NAME", "tony");
+        System.setProperty("hadoop.home.dir", "/");
+    }
+
     @Override
-    public String uploadFile(MultipartFile file, String type) throws IOException {
+    public synchronized String uploadFile(MultipartFile file, String type) throws IOException, InterruptedException {
         Configuration conf = new Configuration();
         conf.set("fs.defaultFS", "hdfs://localhost:9000");
         FileSystem fs = FileSystem.get(conf);
@@ -45,7 +50,7 @@ public class HDFSServiceImpl implements HDFSService {
         String originalFilename = file.getOriginalFilename();
         int splitSign = originalFilename.lastIndexOf(".");
         String papa = originalFilename.substring(splitSign);
-        String newFileName = UUID.randomUUID().toString().replace("-", "").substring(8) + papa;
+        String newFileName = UUID.randomUUID().toString().replace("-", "").substring(0, 8) + papa;
         if (!fs.exists(new Path(outFilePath))) {
             //如果不存在目录,创建目录
             fs.mkdirs(new Path(outFilePath));
@@ -55,16 +60,20 @@ public class HDFSServiceImpl implements HDFSService {
         FSDataOutputStream outputStream = fs.create(new Path(outFilePath));
 //        FileInputStream fileInputStream =new FileInputStream();
         IOUtils.copy(file.getInputStream(), outputStream);
+        Thread.currentThread().sleep(1000*60);
         return outFilePath;
     }
 
     @Override
-    public void downloadFile(String filePath) throws IOException {
+    public synchronized String downloadFile(String filePath) throws IOException, InterruptedException {
         Configuration conf = new Configuration();
         conf.set("fs.defaultFS", "hdfs://localhost:9000");
         FileSystem fs = FileSystem.get(conf);
         FSDataInputStream in = fs.open(new Path(filePath));
-        FileOutputStream fileOutputStream = new FileOutputStream(new File("/home/tony/video/abc.mp4"));
+        String newFileName = UUID.randomUUID().toString().replace("-", "").substring(0, 8) + ".mp4";
+        FileOutputStream fileOutputStream = new FileOutputStream(new File("/home/tony/video/" + newFileName));
         IOUtils.copy(in, fileOutputStream);
+        Thread.currentThread().sleep(1000*60);
+        return newFileName;
     }
 }
