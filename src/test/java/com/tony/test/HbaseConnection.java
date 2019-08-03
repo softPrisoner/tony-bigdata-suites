@@ -1,4 +1,4 @@
-package com.elianda.etest;
+package com.tony.test;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.*;
