@@ -1,4 +1,4 @@
-package com.tony.hbase.config;
+package com.elianda.etest.retry;
 
 import org.apache.hadoop.hbase.shaded.org.apache.commons.lang.math.RandomUtils;
 
@@ -8,7 +8,8 @@ import org.apache.hadoop.hbase.shaded.org.apache.commons.lang.math.RandomUtils;
  * @date 2019-07-29
  */
 public class RetryTest {
-    public static int[] RETRY_BACKOFF = {1, 2, 3, 5, 10, 20, 40, 100, 100, 100, 100, 200, 200};
+    public static int[] RETRY_BACKOFF = {1, 2, 3, 5, 10, 20, 40, 100, 100, 100,
+            100, 200, 200};
 
     public static long retry(int pause, int ntries) {
         //这里可以看出来,可以优化成到达一定重试次数再执行到下一个
