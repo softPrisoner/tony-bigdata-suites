@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Upload Test</title>
+</head>
+<body>
+<form action="/v1/video/upload"
+      enctype="multipart/form-data" method="post">
+    <input type="file" name="file"/>
+    <input style="display: none" type="text" name="type" value="1">
+    <input type="submit" value="上传视频"/>
+</form>
+</body>
+</html>
