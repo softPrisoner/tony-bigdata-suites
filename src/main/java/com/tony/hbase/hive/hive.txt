@@ -1,0 +1,7 @@
+hive> create table fz
+    > (id int,name string,age int,tel string)
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > STORED AS TEXTFILE;
+
+load data local inpath '/home/tony/hive/test.txt' into table account;
