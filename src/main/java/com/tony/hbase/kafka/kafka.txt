@@ -1,0 +1,188 @@
+1:wget http://mirrors.shuosc.org/apache/kafka/1.0.0/kafka_2.11-1.0.0.tgz
+2:vim /usr/local/kafka/config/server.properties
+broker.id=1
+log.dir=/data/kafka/logs-1
+3:bin/zookeeper-server-start.sh -daemon config/zookeeper.properties
+4:bin/kafka-server-start.sh config/server.properties
+5:bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
+6:bin/kafka-topics.sh --list --zookeeper localhost:2181
+7:vim /etc/hosts 解决topic创建错误
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         ip6-localhost ip6-localhost.localdomain localhost6 localhost6.localdomain6
+8:bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
+9:bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic test --from-beginning
+10:bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic test
+[“Leader”: 是负责给定分区的所有读取和写入的节点。 每个节点将成为分区随机选择部分的领导者。
+
+ “Replicas”: 是复制此分区日志的节点列表，无论它们是否是领导者，或者即使他们当前处于活动状态。
+
+ “Isr”: 是一组“同步”副本。这是复制品列表的子集，当前活着并被引导到领导者。]
+
+ cp config/server.properties config/server-2.properties
+
+ cp config/server.properties config/server-3.properties
+
+ vim config/server-2.properties
+
+broker.id=2
+
+listeners = PLAINTEXT://your.host.name:9093
+
+log.dir=/data/kafka/logs-2
+
+ vim config/server-3.properties
+
+
+broker.id=3
+
+listeners = PLAINTEXT://your.host.name:9094
+
+log.dir=/data/kafka/logs-3
+
+
+转载请注明原创地址为：http://www.54tianzhisheng.cn/2018/01/04/Kafka/
+
+mark
+
+介绍
+官网：http://kafka.apache.org/
+
+Apache Kafka是分布式发布-订阅消息系统。它最初由LinkedIn公司开发，之后成为Apache项目的一部分。Kafka是一种快速、可扩展的、设计内在就是分布式的，分区的和可复制的提交日志服务。
+
+Apache Kafka与传统消息系统相比，有以下不同：
+
+它被设计为一个分布式系统，易于向外扩展；
+它同时为发布和订阅提供高吞吐量；
+它支持多订阅者，当失败时能自动平衡消费者；
+它将消息持久化到磁盘，因此可用于批量消费，例如ETL，以及实时应用程序。
+安装 kafka
+下载地址：https://kafka.apache.org/down...
+
+wget http://mirrors.shuosc.org/apache/kafka/1.0.0/kafka_2.11-1.0.0.tgz
+解压：
+
+tar -zxvf kafka_2.11-1.0.0.tgz
+
+cd /usr/local/kafka_2.11-1.0.0/
+修改 kafka-server 的配置文件
+
+vim /usr/local/kafka/config/server.properties
+修改其中的：
+
+broker.id=1
+log.dir=/data/kafka/logs-1
+功能验证：
+1、启动 zk
+使用安装包中的脚本启动单节点 Zookeeper 实例：
+
+bin/zookeeper-server-start.sh -daemon config/zookeeper.properties
+2、启动Kafka 服务
+使用 kafka-server-start.sh 启动 kafka 服务：
+
+bin/kafka-server-start.sh config/server.properties
+mark
+
+3、创建 topic
+使用 kafka-topics.sh 创建单分区单副本的 topic test：
+
+bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
+查看 topic 列表：
+
+bin/kafka-topics.sh --list --zookeeper localhost:2181
+查询创建的 topic 列表报错：
+
+mark
+
+解决方法:
+
+vim /etc/hosts
+将 host 里的
+
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+修改为：
+
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         ip6-localhost ip6-localhost.localdomain localhost6 localhost6.localdomain6
+方法参考：zookeeper unable to open socket to localhost/0:0:0:0:0:0:0:1:2181
+
+再次查询就不报错了。
+
+4、产生消息
+使用 kafka-console-producer.sh 发送消息：
+
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
+mark
+
+5、消费消息
+使用 kafka-console-consumer.sh 接收消息并在终端打印：
+#consumer zookeeper is not a recognized option 版本问题
+bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic test --from-beginning
+打开个新的命令窗口执行上面命令即可查看信息：
+
+mark
+
+6、查看描述 topics 信息
+bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic test
+结果：
+
+Topic:test    PartitionCount:1    ReplicationFactor:1    Configs:
+    Topic: test    Partition: 0    Leader: 1    Replicas: 1    Isr: 1
+mark
+
+第一行给出了所有分区的摘要，每个附加行给出了关于一个分区的信息。 由于我们只有一个分区，所以只有一行。
+
+“Leader”: 是负责给定分区的所有读取和写入的节点。 每个节点将成为分区随机选择部分的领导者。
+
+“Replicas”: 是复制此分区日志的节点列表，无论它们是否是领导者，或者即使他们当前处于活动状态。
+
+“Isr”: 是一组“同步”副本。这是复制品列表的子集，当前活着并被引导到领导者。
+
+集群配置
+Kafka 支持两种模式的集群搭建：可以在单机上运行多个 broker 实例来实现集群，也可在多台机器上搭建集群，下面介绍下如何实现单机多 broker 实例集群，其实很简单，只需要如下配置即可。
+
+单机多broker 集群配置
+利用单节点部署多个 broker。 不同的 broker 设置不同的 id，监听端口及日志目录。 例如：
+
+cp config/server.properties config/server-2.properties
+
+cp config/server.properties config/server-3.properties
+
+vim config/server-2.properties
+
+vim config/server-3.properties
+修改 ：
+
+broker.id=2
+
+listeners = PLAINTEXT://your.host.name:9093
+
+log.dir=/data/kafka/logs-2
+和
+
+broker.id=3
+
+listeners = PLAINTEXT://your.host.name:9094
+
+log.dir=/data/kafka/logs-3
+启动Kafka服务：
+bin/kafka-server-start.sh config/server-2.properties &
+
+bin/kafka-server-start.sh config/server-3.properties &
+
+分别在多个节点按上述方式安装 Kafka，配置启动多个 Zookeeper 实例。
+
+假设三台机器 IP 地址是 ： 192.168.153.135， 192.168.153.136， 192.168.153.137
+
+分别配置多个机器上的 Kafka 服务，设置不同的 broker id，zookeeper.connect 设置如下:
+vim config/server.properties
+里面的 zookeeper.connect
+zookeeper.connect=192.168.153.135:2181,192.168.153.136:2181,192.168.153.137:2181
+
+echo -e "zhisheng\ntian" > test.txt
+
+bin/connect-standalone.sh config/connect-standalone.properties config/connect-file-source.properties config/connect-file-sink.properties
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic connect-test --from-beginning
+
