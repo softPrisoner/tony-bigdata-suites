@@ -1,0 +1,1 @@
+sudo bin/hdfs dfs -chmod -R 755 /video/wx_5535752/2019/8/3解决50070删除文件,权限问题
