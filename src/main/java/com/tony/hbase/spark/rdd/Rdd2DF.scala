@@ -1,4 +1,4 @@
-package com.tony.hbase
+package com.tony.hbase.spark.rdd
 
 import org.apache.spark.sql.SparkSession
 
