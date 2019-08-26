@@ -1,5 +1,6 @@
 package com.tony.hbase.spark.mongo
 
+import com.mongodb.spark.MongoSpark
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
