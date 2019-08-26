@@ -60,7 +60,7 @@ public class HDFSServiceImpl implements HDFSService {
         FSDataOutputStream outputStream = fs.create(new Path(outFilePath));
 //        FileInputStream fileInputStream =new FileInputStream();
         IOUtils.copy(file.getInputStream(), outputStream);
-      // 尝试解决hdfs流失帧问题  Thread.currentThread().sleep(1000*60);
+        // 尝试解决hdfs流失帧卡顿问题  Thread.currentThread().sleep(1000*60);
         return outFilePath;
     }
 
